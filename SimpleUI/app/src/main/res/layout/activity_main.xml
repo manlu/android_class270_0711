@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello Android!"
-        android:id="@+id/textView"
+        android:id="@+id/storetextView"
         android:textColor="#b02d2d" />
 
     <Button
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/storetextView"
         android:layout_centerHorizontal="true" />
 
     <RadioGroup
