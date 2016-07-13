@@ -24,7 +24,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="submit"
-        android:background="@drawable/button"
         android:layout_below="@+id/radiogroup" />
 
     <EditText
@@ -46,16 +45,16 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/maleRadioButton"
+            android:id="@+id/blackTeaRadioButton"
             android:checked="true"
-            android:text="male" />
+            android:text="black tea" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="female"
-            android:id="@+id/femaleRadioButton"
-            android:checked="false" />
+            android:id="@+id/greenTeaRadioButton"
+            android:checked="false"
+            android:text="green tea" />
     </RadioGroup>
 
 </RelativeLayout>
