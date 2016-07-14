@@ -1,7 +1,6 @@
 package com.example.user.simpleui;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToMenu(View view){
         Intent intent = new Intent();//intent企圖跑到另一Activity
         intent.setClass(this,DrinkMenuActivity.class);
-        startActivity(intent,REQUEST_CODE_DRINK_MENU_ACTIVITY);//從哪頁回來
+        startActivityForResult(intent,REQUEST_CODE_DRINK_MENU_ACTIVITY);//從哪頁回來
     }
 
 

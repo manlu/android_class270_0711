@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -59,23 +60,18 @@ public class DrinkMenuActivity extends AppCompatActivity {
         DrinkAdapter adapter = new DrinkAdapter(this,drinks);
         drinkMenuListView.setAdapter(adapter);
 
-        drinkMenuListView.setOnClickListener(new View.OnClickListener() {
+        //使用者按下button後觸發事件
+        drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DrinkAdapter drinkAdapter = (DrinkAdapter)parent.getAdapter();
+                Drink drink = (Drink)drinkAdapter.getItem(position);
+                orders.add(drink);
+                updateTotal();
             }
         });
 
-        //使用者按下button後觸發事件
-        //drinkMenuListView.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //public void onClick(View v) {
-        //        DrinkAdapter drinkAdapter = (DrinkAdapter)parent.getAdapter();
-        //        Drink drink = drinkAdapter.getItem(position);
-        //        orders.add(drink);
-        //        updateTotal();
-        //    }
-        //});
+
     }
 
     public void updateTotal(){
@@ -97,7 +93,7 @@ public class DrinkMenuActivity extends AppCompatActivity {
 
         for(Drink drink : orders)
         {
-            JSONObject jsonObject = drink.getJasonObject();
+            JSONObject jsonObject = drink.getJsonObject();
             jsonArray.put(jsonObject);
         }
 
