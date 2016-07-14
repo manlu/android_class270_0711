@@ -17,7 +17,7 @@ public class DrinkMenuActivity extends AppCompatActivity {
     String[] names = {"冬瓜紅茶","玫瑰鹽奶蓋紅茶","珍珠紅茶拿鐵","紅茶拿鐵"};
     int[] mPrices = {25,35,45,35};
     int[] lPrices = {35,45,55,45};
-    int[] imageld = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4};
+    int[] imagelds = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4};
 
     List<Drink> drinks = new ArrayList<>();
 
@@ -31,6 +31,8 @@ public class DrinkMenuActivity extends AppCompatActivity {
         totalTextView = (TextView)findViewById(R.id.tatalTextView);
         drinkMenuListView = (ListView)findViewById(R.id.drinkMenuListView);
 
+        setupDrinkMenuListView();
+
     }
 
     private void setData()
@@ -41,9 +43,15 @@ public class DrinkMenuActivity extends AppCompatActivity {
             drink.name = names[i];
             drink.mPrice = mPrices[i];
             drink.lPrice = lPrices[i];
-            drink.imageld = imageld[i];
+            drink.imageld = imagelds[i];
             drinks.add(drink);
         }
+    }
+
+    private void setupDrinkMenuListView()
+    {
+        DrinkAdapter adapter = new DrinkAdapter(this,drinks);
+        drinkMenuListView.setAdapter(adapter);
     }
 
     protected void onStart(){
