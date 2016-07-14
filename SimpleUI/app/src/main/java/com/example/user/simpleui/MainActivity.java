@@ -1,6 +1,7 @@
 package com.example.user.simpleui;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +14,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    static final int REQUEST_CODE_DRINK_MENU_ACTIVITY = 0;
 
     TextView textView;
     EditText editText;
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setupListView();
         setupSpinner();
 
-        Log.d("Debug","MainActivity OnCreate");
+        Log.d("Debug", "MainActivity OnCreate");
 
     }
 
@@ -109,8 +113,24 @@ public class MainActivity extends AppCompatActivity {
     public void goToMenu(View view){
         Intent intent = new Intent();//intent企圖跑到另一Activity
         intent.setClass(this,DrinkMenuActivity.class);
-        startActivity(intent);
+        startActivity(intent,REQUEST_CODE_DRINK_MENU_ACTIVITY);//從哪頁回來
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                Toast.makeText(this,"訂購完成",Toast.LENGTH_SHORT).show();
+                textView.setText(data.getStringExtra("results"));
+            }
+        }
+    }
+
 
     protected void onStart(){
         super.onStart();
