@@ -1,5 +1,8 @@
 package com.example.user.simpleui;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +18,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrinkMenuActivity extends AppCompatActivity {
+public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDialog.OnDrinkOrderListener{
 
     TextView totalTextView;
     ListView drinkMenuListView;
@@ -61,16 +64,35 @@ public class DrinkMenuActivity extends AppCompatActivity {
         drinkMenuListView.setAdapter(adapter);
 
         //使用者按下button後觸發事件
-        drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {//一種interface，此物件順便將他實作
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DrinkAdapter drinkAdapter = (DrinkAdapter)parent.getAdapter();
-                Drink drink = (Drink)drinkAdapter.getItem(position);
-                orders.add(drink);
-                updateTotal();
+                DrinkAdapter drinkAdapter = (DrinkAdapter) parent.getAdapter();
+                Drink drink = (Drink) drinkAdapter.getItem(position);
+                showDrinkOrderDialog(drink);
             }
         });
 
+
+    }
+
+    public void showDrinkOrderDialog(Drink drink)
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        //將layout切換
+        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance("","");
+        Fragment prev = getFragmentManager().findFragmentByTag("DrinkOrderDialog");
+        if(prev != null){
+            ft.remove(prev);
+        }
+        //ft.replace(R.id.root,dialog);//DrinkMenuActivity和DrinkOrderDialog import的Fragment資料夾不相同-->改
+        ft.addToBackStack(null);//可以支援back鍵
+        //ft.commit();
+
+        dialog.show(ft,"DrinkOrderDialog");
 
     }
 
@@ -131,5 +153,10 @@ public class DrinkMenuActivity extends AppCompatActivity {
     protected void onRestart(){
         super.onRestart();
         Log.d("Debug", "DrinkMenuActivity onRestart");
+    }
+
+    @Override
+    public void onDrinkOrderFinish() {
+
     }
 }
