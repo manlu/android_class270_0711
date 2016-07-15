@@ -41,16 +41,14 @@ public class DrinkOrderDialog extends DialogFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment DrinkOrderDialog.
      */
     // TODO: Rename and change types and number of parameters
-    public static DrinkOrderDialog newInstance(String param1, String param2) {
+    public static DrinkOrderDialog newInstance(DrinkOrder drinkOrder) {
         DrinkOrderDialog fragment = new DrinkOrderDialog();
         Bundle args = new Bundle();//將變數放進去Bundle在onCreate()出現-->類似Activity的intent(帶資料)
-        args.putString(ARG_PARAM1, param1);//(key值,value)用變數做替代ARG_PARAM1替代param1
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, drinkOrder.toData());//(key值,value)用變數做替代ARG_PARAM1替代param1
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,6 +78,12 @@ public class DrinkOrderDialog extends DialogFragment {
         if(getArguments() != null)
         {
             Bundle bundle = getArguments();
+            String data = bundle.getString(ARG_PARAM1);
+            DrinkOrder drinkOrder = DrinkOrder.newInstanceWithData(data);
+            if(drinkOrder == null)
+            {
+                throw new RuntimeException("Instance Drink Order Fail");//訂單為null丟出錯誤訊息
+            }
         }
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());//顯示大區塊有標題的那種比較美
 
@@ -95,6 +99,7 @@ public class DrinkOrderDialog extends DialogFragment {
 
             }
         });
+
 
         return alertDialogBuilder.create();
     }
@@ -129,6 +134,6 @@ public class DrinkOrderDialog extends DialogFragment {
      */
     public interface OnDrinkOrderListener {//Activity必須要實作這個interface，Fragment跟Activity溝通的方式
         // TODO: Update argument type and name
-        void onDrinkOrderFinish();
+        void onDrinkOrderFinish(DrinkOrder drinkOrder);
     }
 }

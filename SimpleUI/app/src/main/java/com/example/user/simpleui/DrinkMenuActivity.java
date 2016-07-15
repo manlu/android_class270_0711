@@ -29,7 +29,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     int[] imagelds = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4};
 
     List<Drink> drinks = new ArrayList<>();
-    List<Drink> orders = new ArrayList<>();
+    List<DrinkOrder> orders = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +78,15 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     public void showDrinkOrderDialog(Drink drink)
     {
+        //new出訂單
+        DrinkOrder drinkOrder = new DrinkOrder(drink);
+
         FragmentManager fragmentManager = getFragmentManager();
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
         //將layout切換
-        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance("","");
+        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance(drinkOrder);
         Fragment prev = getFragmentManager().findFragmentByTag("DrinkOrderDialog");
         if(prev != null){
             ft.remove(prev);
@@ -98,8 +101,8 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     public void updateTotal(){
         int total = 0;
-        for(Drink drink: orders){
-            total += drink.mPrice;
+        for(DrinkOrder order: orders){
+            total += order.mNumber*order.drink.mPrice+order.lNumber*order.drink.lPrice;
         }//中杯價錢加總
 
         totalTextView.setText(String.valueOf(total));
@@ -113,10 +116,10 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
         JSONArray jsonArray = new JSONArray();
 
-        for(Drink drink : orders)
+        for(DrinkOrder order : orders)
         {
-            JSONObject jsonObject = drink.getJsonObject();
-            jsonArray.put(jsonObject);
+            String data = order.toData();
+            jsonArray.put(data);
         }
 
         intent.putExtra("results",jsonArray.toString());
@@ -156,7 +159,22 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     }
 
     @Override
-    public void onDrinkOrderFinish() {
+    public void onDrinkOrderFinish(DrinkOrder drinkOrder) {
+        Boolean flag = false;
+        for(int index = 0 ; index < orders.size() ; index++)
+        {
+            if(orders.get(index).drink.name.equals(drinkOrder.drink.name))
+            {//看訂單中是否已經有這種飲料
+                orders.set(index,drinkOrder);
+                flag = true;
+                break;
+            }
+        }
 
+        //沒有就新增飲料
+        if(!flag)
+            orders.add(drinkOrder);
+
+        updateTotal();
     }
 }
