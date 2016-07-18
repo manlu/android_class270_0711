@@ -78,8 +78,17 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     public void showDrinkOrderDialog(Drink drink)
     {
-        //new出訂單
         DrinkOrder drinkOrder = new DrinkOrder(drink);
+        for(DrinkOrder order : orders)
+        {
+            if(order.drink.name.equals(drink.name))
+            {//傳近來的飲料名稱=現有訂單的飲料名稱
+                drinkOrder = order;//覆蓋
+                break;
+            }
+        }
+        //new出訂單
+
 
         FragmentManager fragmentManager = getFragmentManager();
 

@@ -11,6 +11,10 @@ import android.app.Fragment;//必須改為和DrinkMenuActivity相同的package
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 
 /**
@@ -27,9 +31,14 @@ public class DrinkOrderDialog extends DialogFragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    //UI變數
+    NumberPicker mediumNumberPicker;
+    NumberPicker largeNumberPicker;
+    RadioGroup iceRadioGroup;
+    RadioGroup sugarRadioGroup;
+    EditText noteEditText;
+
+    private DrinkOrder drinkOrder;
 
     private OnDrinkOrderListener mListener;
 
@@ -79,7 +88,7 @@ public class DrinkOrderDialog extends DialogFragment {
         {
             Bundle bundle = getArguments();
             String data = bundle.getString(ARG_PARAM1);
-            DrinkOrder drinkOrder = DrinkOrder.newInstanceWithData(data);
+            drinkOrder = DrinkOrder.newInstanceWithData(data);
             if(drinkOrder == null)
             {
                 throw new RuntimeException("Instance Drink Order Fail");//訂單為null丟出錯誤訊息
@@ -88,10 +97,19 @@ public class DrinkOrderDialog extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());//顯示大區塊有標題的那種比較美
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null);
-        alertDialogBuilder.setView(contentView).setTitle("Hello Dialog").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setView(contentView).setTitle(drinkOrder.drink.name).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which) {//0718
+                drinkOrder.mNumber = mediumNumberPicker.getValue();
+                drinkOrder.lNumber = largeNumberPicker.getValue();
+                drinkOrder.note = noteEditText.getText().toString();
+                drinkOrder.ice = getSelectedTextFromRadioGroup(iceRadioGroup);
+                drinkOrder.sugar = getSelectedTextFromRadioGroup(sugarRadioGroup);
 
+                if(mListener != null)
+                {
+                    mListener.onDrinkOrderFinish(drinkOrder);
+                }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -100,10 +118,30 @@ public class DrinkOrderDialog extends DialogFragment {
             }
         });
 
+        //0718
+        mediumNumberPicker = (NumberPicker)contentView.findViewById(R.id.mediumNumberPicker);
+        mediumNumberPicker.setMaxValue(100);//最多100杯
+        mediumNumberPicker.setMinValue(0);//最少0杯
+        mediumNumberPicker.setValue(drinkOrder.mNumber);//預設值
+
+        largeNumberPicker = (NumberPicker)contentView.findViewById(R.id.largeNumberPicker);
+        largeNumberPicker.setMaxValue(100);
+        largeNumberPicker.setMinValue(0);
+        largeNumberPicker.setValue(drinkOrder.lNumber);
+
+        iceRadioGroup = (RadioGroup)contentView.findViewById(R.id.iceRadioGroup);
+        sugarRadioGroup = (RadioGroup)contentView.findViewById(R.id.sugarRadioGroup);
+        noteEditText = (EditText)contentView.findViewById(R.id.noteEditText);
 
         return alertDialogBuilder.create();
     }
 
+    private String getSelectedTextFromRadioGroup(RadioGroup radioGroup)
+    {//0718回傳點選的radioButton上的字
+        int checkedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+        RadioButton checkedRadioButton = (RadioButton)radioGroup.findViewById(checkedRadioButtonId);//拿出點選到的那個RadioButton的Id，前一行命名的int
+        return checkedRadioButton.getText().toString();
+    }
     //兩個Fragment無法互相溝通必須藉由Activity
     @Override
     public void onAttach(Context context) {//生命週期開始
