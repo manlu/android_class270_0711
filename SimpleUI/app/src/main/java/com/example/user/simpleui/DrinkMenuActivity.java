@@ -78,6 +78,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     public void showDrinkOrderDialog(Drink drink)
     {
+        //new出訂單
         DrinkOrder drinkOrder = new DrinkOrder(drink);
         for(DrinkOrder order : orders)
         {
@@ -87,8 +88,6 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
                 break;
             }
         }
-        //new出訂單
-
 
         FragmentManager fragmentManager = getFragmentManager();
 
