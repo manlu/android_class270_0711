@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         spinner = (Spinner)findViewById(R.id.spinner);
 
         //0718
-        sharedPreferences = getSharedPreferences("setting",MODE_APPEND);//MODE_APPEND資料累加不覆蓋
+        sharedPreferences = getSharedPreferences("setting", MODE_APPEND);//MODE_APPEND資料累加不覆蓋
         editor = sharedPreferences.edit();//有權限更改資料
 
         editText.setText(sharedPreferences.getString("editText", ""));
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 String text = editText.getText().toString();
                 editor.putString("editText", text);
                 editor.commit();
-                if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)//ACTION_DOWN是偵測按下的那個瞬間
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)//ACTION_DOWN是偵測按下的那個瞬間
                 {
                     submit(v);//呼叫submit
                     return true;//攔截，注解掉後還是會空一行
@@ -77,11 +77,20 @@ public class MainActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton)group.findViewById(checkedId);
+                RadioButton radioButton = (RadioButton) group.findViewById(checkedId);
                 selectedTea = radioButton.getText().toString();
             }
         });
 
+        String history = Utils.readFile(this,"history");//讀出之前的history
+        String[] datas = history.split("\n");//用換行來分割新的訂單
+        for(String data : datas)
+        {
+            Order order = Order.newInstanceWithData(data);
+            if(order != null) {
+                orders.add(order);
+            }
+        }
         setupListView();
         setupSpinner();
 
@@ -119,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
         order.storeInfo = (String)spinner.getSelectedItem();
 
         orders.add(order);
+
+        Utils.writeFile(this, "history", order.toData() + "\n");
 
         setupListView();//更新
 
