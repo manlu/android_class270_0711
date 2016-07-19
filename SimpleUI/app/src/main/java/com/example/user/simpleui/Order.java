@@ -2,12 +2,15 @@ package com.example.user.simpleui;
 
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by user on 2016/7/13.
@@ -102,9 +105,19 @@ public class Order extends ParseObject {
                 return 0;
         }
 
-        public static void getOrdersFromRemote(FindCallback<Order>callback)
-        {//下載
-                getQuery().findInBackground(callback);
+        public static void getOrdersFromRemote(final FindCallback<Order>callback)
+        {//下載訂單
+                getQuery().findInBackground(new FindCallback<Order>() {
+                        @Override
+                        public void done(List<Order> objects, ParseException e) {
+                                if(e == null){
+                                        Order.pinAllInBackground("Order", objects);//把載回的資料欑在local端
+                                }else{
+                                        Order.getQuery().fromLocalDatastore().findInBackground(callback);
+                                }
+                                callback.done(objects, e);//在執行使用者新增訂單
+                        }
+                });
         }
 
         public static ParseQuery<Order> getQuery()

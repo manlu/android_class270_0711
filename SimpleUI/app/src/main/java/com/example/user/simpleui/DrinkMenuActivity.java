@@ -50,9 +50,9 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         for(int i = 0 ; i < names.length ; i++)
         {
             Drink drink = new Drink();
-            drink.name = names[i];
-            drink.mPrice = mPrices[i];
-            drink.lPrice = lPrices[i];
+            drink.setName(names[i]);
+            drink.setmPrice(mPrices[i]);
+            drink.setlPrice(lPrices[i]);
             drink.imageld = imagelds[i];
             drinks.add(drink);
         }
@@ -82,7 +82,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         DrinkOrder drinkOrder = new DrinkOrder(drink);
         for(DrinkOrder order : orders)
         {
-            if(order.drink.name.equals(drink.name))
+            if(order.drink.setName(equals(drink.setName()));
             {//傳近來的飲料名稱=現有訂單的飲料名稱
                 drinkOrder = order;//覆蓋
                 break;
@@ -110,7 +110,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     public void updateTotal(){
         int total = 0;
         for(DrinkOrder order: orders){
-            total += order.mNumber*order.drink.mPrice+order.lNumber*order.drink.lPrice;
+            total += order.mNumber*order.drink.mPrice;+order.lNumber*order.drink.lPrice;
         }//中杯價錢加總
 
         totalTextView.setText(String.valueOf(total));

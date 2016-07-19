@@ -60,9 +60,9 @@ public class DrinkAdapter extends BaseAdapter {
 
         //將設定好的名字圖片價錢丟進相對位置
         Drink drink = drinkList.get(position);
-        holder.drinkName.setText(drink.name);
-        holder.mPriceTextView.setText(String.valueOf(drink.mPrice));
-        holder.lPriceTextView.setText(String.valueOf(drink.lPrice));
+        holder.drinkName.setText(drink.getName());
+        holder.mPriceTextView.setText(String.valueOf(drink.getmPrice());
+        holder.lPriceTextView.setText(String.valueOf(drink.getlPrice());
         //原本設定為int顯示時須強制轉型成String(TextView)
         holder.imageView.setImageResource(drink.imageld);
 
