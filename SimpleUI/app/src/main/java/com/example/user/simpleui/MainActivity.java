@@ -90,43 +90,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        String history = Utils.readFile(this,"history");//讀出之前的history
-        String[] datas = history.split("\n");//用換行來分割新的訂單
-        for(String data : datas)
-        {
-            Order order = Order.newInstanceWithData(data);
-            if(order != null) {
-                orders.add(order);
-            }
-        }
+//        String history = Utils.readFile(this,"history");//讀出之前的history
+//        String[] datas = history.split("\n");//用換行來分割新的訂單
+//        for(String data : datas)
+//        {
+//            Order order = Order.newInstanceWithData(data);
+//            if(order != null) {
+//                orders.add(order);
+//            }
+//        }
         setupListView();
         setupSpinner();
 
-        //0719
-        ParseObject parseObject = new ParseObject("Test");//寫進test這個資料夾 back{4}app
-        parseObject.put("foo", "bar");
-        parseObject.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null)
-                    Toast.makeText(MainActivity.this, "上傳成功", Toast.LENGTH_LONG).show();
-            }
-        });
+//        //0719
+//        ParseObject parseObject = new ParseObject("Test");//寫進test這個資料夾 back{4}app
+//        parseObject.put("foo", "bar");
+//        parseObject.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if (e == null)
+//                    Toast.makeText(MainActivity.this, "上傳成功", Toast.LENGTH_LONG).show();
+//            }
+//        });
+//
+//        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Test");
+//        query.findInBackground(new FindCallback<ParseObject>() {
+//            @Override
+//            public void done(List<ParseObject> objects, ParseException e) {
+//                if(e == null)
+//                {
+//                    for (ParseObject object : objects)
+//                    {
+//                        Toast.makeText(MainActivity.this, object.getString("foo"), Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//
+//            }
+//        });
 
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Test");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if(e == null)
-                {
-                    for (ParseObject object : objects)
-                    {
-                        Toast.makeText(MainActivity.this, object.getString("foo"), Toast.LENGTH_LONG).show();
-                    }
-                }
 
-            }
-        });
 
 
         Log.d("Debug", "MainActivity OnCreate");
@@ -139,6 +141,16 @@ public class MainActivity extends AppCompatActivity {
         //String[] data = new String[]{"black tea","green tea","1","2","3","4","5"};
         //轉換器
         //ArrayAdapter<String>adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,data);
+        //0719
+        Order.getOrdersFromRemote(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> objects, ParseException e) {//回傳網路上的訂單
+                orders = objects;
+                OrderAdapter adapter = new OrderAdapter(MainActivity.this,orders);
+                listView.setAdapter(adapter);
+            }
+        });
+        
         OrderAdapter adapter = new OrderAdapter(this,orders);
         listView.setAdapter(adapter);
     }
@@ -158,9 +170,10 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(text);
 
         Order order = new Order();
-        order.note = text;
-        order.menuResults = menuResults;//包含所有的訂購資訊的menuResults
-        order.storeInfo = (String)spinner.getSelectedItem();
+        order.setNote(text);
+        order.setMenuResults(menuResults);//包含所有的訂購資訊的menuResults
+        order.setStoreInfo((String) spinner.getSelectedItem());
+        order.saveInBackground();//上傳
 
         orders.add(order);
 
@@ -170,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         editText.setText("");//清空editText
 
-        menuResults = "";
+        menuResults = "";//清空
 
     }
 
