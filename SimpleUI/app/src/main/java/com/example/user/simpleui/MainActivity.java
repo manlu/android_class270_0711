@@ -197,9 +197,13 @@ public class MainActivity extends AppCompatActivity {
         order.setStoreInfo((String) spinner.getSelectedItem());
 
         order.pinInBackground("Order");//給class name，存在local端
-        order.saveEventually();//當使用者有網路時上傳
-
-
+        //order.saveEventually();//當使用者有網路時上傳
+        order.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                setupListView();
+            }
+        });
 
         orders.add(order);
 

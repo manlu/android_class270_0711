@@ -112,6 +112,7 @@ public class Order extends ParseObject {
                         public void done(List<Order> objects, ParseException e) {
                                 if(e == null){
                                         Order.pinAllInBackground("Order", objects);//把載回的資料欑在local端
+                                        callback.done(objects, e);
                                 }else{
                                         Order.getQuery().fromLocalDatastore().findInBackground(callback);
                                 }

@@ -8,8 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.GetFileCallback;
+import com.parse.ParseException;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +47,7 @@ public class DrinkAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Holder holder;
+        final Holder holder;
         if(convertView == null)
         {
             convertView = inflater.inflate(R.layout.listview_drink_item,null);
@@ -67,9 +70,17 @@ public class DrinkAdapter extends BaseAdapter {
         holder.lPriceTextView.setText(String.valueOf(drink.getlPrice()));
         //原本設定為int顯示時須強制轉型成String(TextView)
         //holder.imageView.setImageResource(drink.imageld);
-        //0720從網路上下載圖片加入app
-        //picasso build.gradle compile 'com.squareup.picasso:picasso:2.5.2'//0720網路圖片連接
-        Picasso.with(inflater.getContext()).load(drink.getImage().getUrl()).into(holder.imageView);
+
+//        0720從網路上下載圖片加入app
+//        picasso build.gradle compile 'com.squareup.picasso:picasso:2.5.2'//0720網路圖片連接
+//        Picasso.with(inflater.getContext()).load(drink.getImage().getUrl()).into(holder.imageView);
+
+        drink.getImage().getFileInBackground(new GetFileCallback() {
+            @Override
+            public void done(File file, ParseException e) {
+                Picasso.with(inflater.getContext()).load(file).into(holder.imageView);
+            }
+        });
         return convertView;
     }
 
