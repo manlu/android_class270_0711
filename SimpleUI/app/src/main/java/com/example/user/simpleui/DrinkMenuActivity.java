@@ -12,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,17 +48,25 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     }
 
-    private void setData()
+      private void setData()
     {
-        for(int i = 0 ; i < names.length ; i++)
-        {
-            Drink drink = new Drink();
-            drink.setName(names[i]);
-            drink.setmPrice(mPrices[i]);
-            drink.setlPrice(lPrices[i]);
-            drink.imageld = imagelds[i];
-            drinks.add(drink);
-        }
+//        for(int i = 0 ; i < names.length ; i++)
+//        {
+//            Drink drink = new Drink();
+//            drink.setName(names[i]);
+//            drink.setmPrice(mPrices[i]);
+//            drink.setlPrice(lPrices[i]);
+//            drink.imageld = imagelds[i];
+//            drinks.add(drink);
+//        }
+        //0720
+        Drink.syncDrinksFromRemote(new FindCallback<Drink>() {
+            @Override
+            public void done(List<Drink> objects, ParseException e) {
+                drinks = objects;
+                setupDrinkMenuListView();
+            }
+        });
     }
 
     private void setupDrinkMenuListView()
@@ -82,7 +93,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         DrinkOrder drinkOrder = new DrinkOrder(drink);
         for(DrinkOrder order : orders)
         {
-            if(order.drink.setName(equals(drink.setName()));
+            if(order.drink.getName().equals(drink.getName()))
             {//傳近來的飲料名稱=現有訂單的飲料名稱
                 drinkOrder = order;//覆蓋
                 break;
@@ -110,7 +121,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     public void updateTotal(){
         int total = 0;
         for(DrinkOrder order: orders){
-            total += order.mNumber*order.drink.mPrice;+order.lNumber*order.drink.lPrice;
+            total += order.mNumber*order.drink.getmPrice()+order.lNumber*order.drink.getlPrice();
         }//中杯價錢加總
 
         totalTextView.setText(String.valueOf(total));
@@ -171,7 +182,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
         Boolean flag = false;
         for(int index = 0 ; index < orders.size() ; index++)
         {
-            if(orders.get(index).drink.name.equals(drinkOrder.drink.name))
+            if(orders.get(index).drink.getName().equals(drinkOrder.drink.getName()))
             {//看訂單中是否已經有這種飲料
                 orders.set(index,drinkOrder);
                 flag = true;

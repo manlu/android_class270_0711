@@ -200,11 +200,12 @@ public class MainActivity extends AppCompatActivity {
         order.saveEventually();//當使用者有網路時上傳
 
 
+
         orders.add(order);
 
         Utils.writeFile(this, "history", order.toData() + "\n");
 
-        setupListView();//更新
+        //setupListView();//更新
 
         editText.setText("");//清空editText
 

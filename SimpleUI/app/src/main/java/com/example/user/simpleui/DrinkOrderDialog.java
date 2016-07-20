@@ -97,7 +97,7 @@ public class DrinkOrderDialog extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());//顯示大區塊有標題的那種比較美
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null);
-        alertDialogBuilder.setView(contentView).setTitle(drinkOrder.drink.name).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setView(contentView).setTitle(drinkOrder.drink.getName()).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {//0718
                 drinkOrder.mNumber = mediumNumberPicker.getValue();

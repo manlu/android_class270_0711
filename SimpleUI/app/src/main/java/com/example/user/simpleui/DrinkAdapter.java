@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +63,13 @@ public class DrinkAdapter extends BaseAdapter {
         //將設定好的名字圖片價錢丟進相對位置
         Drink drink = drinkList.get(position);
         holder.drinkName.setText(drink.getName());
-        holder.mPriceTextView.setText(String.valueOf(drink.getmPrice());
-        holder.lPriceTextView.setText(String.valueOf(drink.getlPrice());
+        holder.mPriceTextView.setText(String.valueOf(drink.getmPrice()));
+        holder.lPriceTextView.setText(String.valueOf(drink.getlPrice()));
         //原本設定為int顯示時須強制轉型成String(TextView)
-        holder.imageView.setImageResource(drink.imageld);
-
+        //holder.imageView.setImageResource(drink.imageld);
+        //0720從網路上下載圖片加入app
+        //picasso build.gradle compile 'com.squareup.picasso:picasso:2.5.2'//0720網路圖片連接
+        Picasso.with(inflater.getContext()).load(drink.getImage().getUrl()).into(holder.imageView);
         return convertView;
     }
 

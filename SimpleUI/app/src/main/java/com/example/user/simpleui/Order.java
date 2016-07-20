@@ -115,7 +115,7 @@ public class Order extends ParseObject {
                                 }else{
                                         Order.getQuery().fromLocalDatastore().findInBackground(callback);
                                 }
-                                callback.done(objects, e);//在執行使用者新增訂單
+
                         }
                 });
         }
