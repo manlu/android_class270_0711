@@ -15,7 +15,7 @@
         //0721 API Key
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA3lG_XhWfx2QnpyfAF7i4blc_MmpWACKwY"/>
+            android:value="AIzaSyA3lG_XhWfx2QnpyfAF7i4blc_MmpWACKw"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

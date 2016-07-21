@@ -187,10 +187,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupSpinner()
     {
-        //讀取寫在array.xml檔中的item
-        String[] data  = getResources().getStringArray(R.array.storeInfos);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,data);
-        spinner.setAdapter(adapter);
+        //讀取寫在array.xml檔中的item(作業4)
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("storeInfo");
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                List<String> storeInfos = new ArrayList<String>();
+                for(ParseObject object : objects){
+                    String storeInfo = object.getString("name")+","+object.getString("address");
+                    storeInfos.add(storeInfo);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_spinner_dropdown_item,storeInfos);
+                spinner.setAdapter(adapter);
+            }
+        });
+//        String[] data  = getResources().getStringArray(R.array.storeInfos);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,data);
+//        spinner.setAdapter(adapter);
     }
 
     public void submit(View view)

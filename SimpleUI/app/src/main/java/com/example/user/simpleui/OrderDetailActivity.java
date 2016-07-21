@@ -14,6 +14,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.w3c.dom.Text;
 
@@ -66,35 +68,47 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
     }
     //0721
     @Override
-    public void reponseWithGeoCodingResults(LatLng latLng) {
+    public void reponseWithGeoCodingResults(LatLng latlng) {
         if(googleMap != null){
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,17);
-            googleMap.animateCamera(cameraUpdate);
+            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng, 17);
+            //googleMap.animateCamera(cameraUpdate);
+            MarkerOptions markerOptions = new MarkerOptions().position(latlng).title("台灣大學").snippet("hello google map");
+            googleMap.addMarker(markerOptions);
+
+            //使用者點選mark
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    CameraUpdate cp = CameraUpdateFactory.newLatLngZoom(marker.getPosition(),21);//放大21倍
+                    googleMap.animateCamera(cp);//animate移動動畫
+                    return false;
+                }
+            });
             googleMap.moveCamera(cameraUpdate);//動畫取消
         }
     }
 
     //網路連線，執行緒
-    public static class GeoCodingTask extends AsyncTask<String,Void,Bitmap>{
-        WeakReference<ImageView> imageViewWeakReference;
-        @Override
-        protected Bitmap doInBackground(String... params) {//做網路連線
-            String address = params[0];
-            double[] latlng = Utils.getLatLngFromGoogleMapAPI(address);
-            return Utils.getStaticMap(latlng);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {//改UI上的元件
-            super.onPostExecute(bitmap);
-            if(imageViewWeakReference.get() != null && bitmap != null){
-                ImageView imageView = imageViewWeakReference.get();
-                imageView.setImageBitmap(bitmap);
-            }
-        }
-
-        public GeoCodingTask(ImageView imageView){
-            this.imageViewWeakReference = new WeakReference<ImageView>(imageView);
-        }
-    }
+//    public static class GeoCodingTask extends AsyncTask<String,Void,Bitmap>{
+//        WeakReference<ImageView> imageViewWeakReference;
+//        @Override
+//        protected Bitmap doInBackground(String... params) {//做網路連線
+//            String address = params[0];
+//            double[] latlng = Utils.getLatLngFromGoogleMapAPI(address);
+//            return Utils.getStaticMap(latlng);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Bitmap bitmap) {//改UI上的元件
+//            super.onPostExecute(bitmap);
+//            if(imageViewWeakReference.get() != null && bitmap != null){
+//                ImageView imageView = imageViewWeakReference.get();
+//                imageView.setImageBitmap(bitmap);
+//            }
+//        }
+//
+//        public GeoCodingTask(OrderDetailActivity imageView){
+//            this.imageViewWeakReference = new WeakReference<ImageView>(imageView);
+//        }
+//    }
 }
