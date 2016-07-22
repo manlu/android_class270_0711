@@ -189,6 +189,37 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
         {
             marker.setPosition(currentLatLng);
         }
+
+        //0722使用者移動時線斷跟著改變
+        if(polylines.size() > 0){
+            for(Polyline polyline : polylines){
+                List<LatLng> points = polyline.getPoints();
+                int index = -1;
+                for(int i =0;i<points.size();i++){
+                    if(i != points.size()-1){//不等於最後一個點
+                        LatLng point1 = points.get(i);
+                        LatLng point2 = points.get(i+1);
+
+                        Double maxLat = Math.max(point1.latitude, point2.latitude);
+                        Double minLat = Math.min(point1.latitude, point2.latitude);
+                        Double maxLng = Math.max(point1.longitude,point2.longitude);
+                        Double minLng = Math.min(point1.longitude,point2.longitude);
+
+                        if(currentLatLng.latitude >= minLat && currentLatLng.latitude < maxLat && currentLatLng.longitude >= minLng && currentLatLng.longitude < maxLng ){
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                if(index != -1){
+                    for(int i=index-1;i>=0;i--){
+                        points.remove(0);
+                    }
+                    points.set(0,currentLatLng);
+                    polyline.setPoints(points);
+                }
+            }
+        }
     }
 
     protected void onStart(){
