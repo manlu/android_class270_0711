@@ -111,7 +111,9 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
                 }
             });
 
-            googleMap.moveCamera(cameraUpdate);
+            //googleMap.moveCamera(cameraUpdate);
+            storeLocation = latlng;
+            createGoogleAPIClient();
         }
     }
     //0722
