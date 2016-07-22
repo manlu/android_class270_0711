@@ -196,12 +196,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupSpinner() {
         //讀取寫在array.xml檔中的item(作業4)
-        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("storeInfo");
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("StoreInfo");
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 List<String> storeInfos = new ArrayList<String>();
-                for (ParseObject object : objects) {
+                for(ParseObject object : objects)
+                {
                     String storeInfo = object.getString("name") + "," + object.getString("address");
                     storeInfos.add(storeInfo);
                 }

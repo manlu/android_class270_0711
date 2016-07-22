@@ -3,6 +3,8 @@ package com.example.user.simpleui;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,6 +14,11 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -25,21 +32,27 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import android.Manifest;
 import java.util.logging.Handler;
 
-public class OrderDetailActivity extends AppCompatActivity implements GeoCodingTask.GeoCodingResponse, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
+public class OrderDetailActivity extends AppCompatActivity implements GeoCodingTask.GeoCodingResponse, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener, RoutingListener {
 
     final static int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
     GoogleMap googleMap;
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
+    Marker marker;
+    List<Polyline> polylines = new ArrayList<>();
+    LatLng storeLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,23 +95,23 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
     //0721
     @Override
     public void reponseWithGeoCodingResults(LatLng latlng) {
-        if(googleMap != null){
-            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng, 17);
-            //googleMap.animateCamera(cameraUpdate);
-            MarkerOptions markerOptions = new MarkerOptions().position(latlng).title("台灣大學").snippet("hello google map");
+        if (googleMap != null)
+        {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng, 17);
+//            googleMap.animateCamera(cameraUpdate);
+            MarkerOptions markerOptions = new MarkerOptions().position(latlng).title("台灣大學").snippet("Hello Google Map");
             googleMap.addMarker(markerOptions);
 
-            //使用者點選mark
             googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    CameraUpdate cp = CameraUpdateFactory.newLatLngZoom(marker.getPosition(),21);//放大21倍
-                    googleMap.animateCamera(cp);//animate移動動畫
+                    CameraUpdate cp = CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 21);
+                    googleMap.moveCamera(cp);
                     return false;
                 }
             });
-            //googleMap.moveCamera(cameraUpdate);//動畫取消
-            createGoogleAPIClient();
+
+            googleMap.moveCamera(cameraUpdate);
         }
     }
     //0722
@@ -126,6 +139,10 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
             start = new LatLng(location.getLatitude(),location.getLongitude());
         }
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 17));
+
+        Routing routing = new Routing.Builder().travelMode(AbstractRouting.TravelMode.WALKING)
+                .waypoints(start,storeLocation).withListener(this).build();
+        routing.execute();
     }
 
     @Override
@@ -162,6 +179,66 @@ public class OrderDetailActivity extends AppCompatActivity implements GeoCodingT
     public void onLocationChanged(Location location) {
         LatLng currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,17));
+        if (marker == null) {
+            MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title("台灣大學").snippet("Hello Google Map");
+            marker = googleMap.addMarker(markerOptions);
+        }
+        else
+        {
+            marker.setPosition(currentLatLng);
+        }
+    }
+
+    protected void onStart(){
+        super.onStart();
+        if(googleApiClient != null){
+            googleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(googleApiClient != null){
+            googleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> routs, int i) {
+        if(polylines.size() > 0){//清空地圖上原本的路線
+            for(Polyline polyline : polylines){
+                polyline.remove();
+            }
+            polylines.clear();
+        }
+        //增加新路線
+        for(int index=0;index<routs.size();index++){
+            List<LatLng> points = routs.get(index).getPoints();//拿出路線上的所有轉彎點
+            //畫出線段(設定)
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.addAll(points);
+            polylineOptions.color(Color.GREEN);
+            polylineOptions.width(10);//線段寬度
+            //畫出線斷(顯示)
+            Polyline polyline = googleMap.addPolyline(polylineOptions);
+            polylines.add(polyline);
+        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+
     }
 
     //網路連線，執行緒
